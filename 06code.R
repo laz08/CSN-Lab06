@@ -101,10 +101,11 @@ threshold.ba = spectrum(ba.graph)$values
 threshold.star = spectrum(star.graph)$values
 threshold.ws = spectrum(ws.graph)$values
 
-beta.2 = 0.005
-#gamma = 0.05
-
+beta.2 = 0.05
 gamma.2 = threshold.er * beta.2; gamma.2
+
+gamma.2 = 0.15
+beta.2 = 
 
 p.2 = 5
 ts.2 = 40
