@@ -1,0 +1,88 @@
+---
+title: "CSN 06 - Simulation of SIS model over networks"
+author: "Carolina Jorge, Laura Cebollero"
+date: "17th of December, 2018"
+output: 
+    pdf_document:
+        number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen=999)
+library("knitr")
+library("ggplot2")
+library("data.table")
+```
+```{r setup2, include=FALSE, echo=FALSE, cache=F}
+source("06code.R")
+```
+
+# Introduction
+
+In this delivery we are asked to study the SIS model infection. To do so, we are asked to create a function that simulates an SIS infection on a given network.
+
+After having our function implemented, then we have to check what the epidemic treshold is.
+
+Theoretically speaking, it should be $$\frac{1}{\lambda_{1}}$$
+
+So we are going to check that among other things.
+
+The graph models we are going to use in this study are five and always with size $n = 1000$:
+
+1. Erdos-Renyi (ER) graph.
+    1.1. Probability of generating an edge between two nodes of 0.5.
+2. A fully connected graph.
+3. Barabasi-Albert (BA) graph. Power of preferential attachment = 1.
+4. A star.
+5. Watts-Strogatz (WS) Small world.
+    5.1. Dimension 1, neighborhood 4, rewiring probability of 0.4.
+
+TODO: Add table with densities etc for each model.
+
+# Spread of the disease
+
+Let's first address Task 01. Having implemented the function that simulates the spread of an infection in a SIS model for a given graph, we are going to check the evolution of the infected nodes and susceptible ones.
+
+For fixed parameters such that:
+
+- $\beta = 0.05$
+- $\gamma = 0.15$
+- $p = 10$. 1% of the total nodes start on $t_{0}$ as infected.
+
+below are the evolutions of the number of infectes nodes vs. the number of susceptible nodes.
+
+We have fixed the parameters such that $\beta << \gamma$, meaning that there should be more recoveries than infected nodes.
+
+```{r  echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
+plotEvolution(nrInfected.er.graph, n, "Erdos-Renyi infected/susceptible evolution")
+plotEvolution(nrInfected.full.graph, n, "Fully connected g. infected/susceptible evolution")
+plotEvolution(nrInfected.ba.graph, n, "Barabasi-Albert infected/susceptible evolution")
+plotEvolution(nrInfected.star.graph, n, "Star infected/susceptible evolution")
+plotEvolution(nrInfected.ws.graph, n, "Watts-Strogatz infected/susceptible evolution")
+```
+
+
+We can see how the ER and Full graph are very prone on infection, since they are pretty well-connected. 
+The infection spreads really fast and the number of infected nodes steadies on a very large number, meaning that many nodes are going to be infected onwards.
+
+In the BA model the contrary happens. The disease does not really spread and it actually dies a little bit before the 20 iteration.
+
+On the star model, the disease does not spread much and does it slowlier than on ER and the full graph. We can see how this network is pretty resistant and the number of susceptible (thus, not infected) is really higher than dose infected.
+
+Finally, on the last model, the WS, we can see how the disease spreads even slowlier than on the star network, but it actually reaches a higher number of infected nodes than it. It then steadies around $t = 50$.
+
+For a better comparison, we can plot the evolution of infected together:
+```{r  echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
+ plot(seq(length(nrInfected.er.graph)), nrInfected.er.graph, type='l', ylim = c(0, n), col="blue", main="Infected nodes evolution comparison", ylab = "# infected nodes", xlab="t")
+    lines(nrInfected.full.graph, col="red")
+    lines(nrInfected.ba.graph, col="green")
+    lines(nrInfected.star.graph, col="orchid")
+    lines(nrInfected.ws.graph, col="skyblue")
+    grid()
+    legend("bottomright", legend = c("Erdo-Renyi", "Full graph", "Barabasi-Albert", "Star", "Watts-Strogatz"),
+           lty = 1, lwd = 2,col = c("blue", "red", "green", "orchid", "skyblue"))
+
+```
+
+TODO: Justify it a little bit more using the metrics from the previous todo.
