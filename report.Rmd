@@ -38,7 +38,16 @@ The graph models we are going to use in this study are five and always with size
 5. Watts-Strogatz (WS) Small world.
     5.1. Dimension 1, neighborhood 4, rewiring probability of 0.4.
 
-TODO: Add table with densities etc for each model.
+Let's see their basic metrics:
+
+```{r echo=FALSE}
+kable(computeSummaryTable(graphs),  caption="\\label{tab:table1}Summary table of all 5 graphs",
+      col.names = c("Graph", "N", "E", "$\\langle k \\rangle$", "$\\delta$", "Diameter"),
+      align=rep('c', 6))
+```
+
+We can see...
+TODO
 
 # Spread of the disease
 
@@ -85,4 +94,4 @@ For a better comparison, we can plot the evolution of infected together:
 
 ```
 
-TODO: Justify it a little bit more using the metrics from the previous todo.
+TODO: Justify it a little bit more using the metrics from the previous metrics tabl
