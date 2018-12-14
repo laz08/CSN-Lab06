@@ -1,7 +1,7 @@
 rm(list = ls())
 
 # Load and install necessary packages
-requiredPackages <- c("igraph", "ggplot2", "ggthemes", "esquisse")
+requiredPackages <- c("igraph", "ggplot2", "ggthemes", "esquisse", "data.table")
 
 for (pac in requiredPackages) {
     if(!require(pac,  character.only=TRUE)){
@@ -104,8 +104,9 @@ threshold.ws = spectrum(ws.graph)$values
 beta.2 = 0.05
 gamma.2 = threshold.er * beta.2; gamma.2
 
-gamma.2 = 0.15
-beta.2 = 
+gamma.2 = 0.4
+(beta.2 = gamma.2 /threshold.full); 
+beta.2 = beta.2 - 0.000
 
 p.2 = 5
 ts.2 = 40
