@@ -1,7 +1,7 @@
 rm(list = ls())
 
 # Load and install necessary packages
-requiredPackages <- c("igraph", "ggplot2", "ggthemes", "esquisse")
+requiredPackages <- c("igraph", "ggplot2", "ggthemes", "esquisse", "data.table")
 
 for (pac in requiredPackages) {
     if(!require(pac,  character.only=TRUE)){
@@ -19,7 +19,7 @@ if(grepl("nora", wd)) {
     setwd("~/Documents/18-19/CSN/LABS/06/")
 } else {
     # Set Carolina Working directory
-    setwd("")
+    setwd("C:/Users/Carolina/Documents/FEUP/5A/1S/CSN/Lab/CSN-Lab06")
 }
 rm(wd)
 

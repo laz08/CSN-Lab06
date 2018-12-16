@@ -22,9 +22,10 @@ source("06code.R")
 
 In this delivery we are asked to study the SIS model infection. To do so, we are asked to create a function that simulates an SIS infection on a given network.
 
-After having our function implemented, then we have to check what the epidemic treshold is.
+After having our function implemented, then we have to check what the epidemic threshold $(\frac{\beta}{\lambda})$ is.
 
-Theoretically speaking, it should be $$\frac{1}{\lambda_{1}}$$
+Theoretically speaking, it should be $$\frac{1}{\lambda_{1}}$$, where $\lambda_{1}$ is the largest eigenvalue of the underlying contact
+network.
 
 So we are going to check that among other things.
 
@@ -46,8 +47,8 @@ kable(computeSummaryTable(graphs),  caption="\\label{tab:table1}Summary table of
       align=rep('c', 6))
 ```
 
-We can see...
-TODO
+With the parameters used, the full graph is the one that contains the largest amount of edges. This is obvious since the diameter is 1, all nodes are connected to all the other nodes. Erdos-Renyi follows with half of the edges, justifiable since we gave it the probability of 0.5 to generate an edge between two nodes (thus, the diameter will be 2). Barabasi-Albert model is the one with the smallest diameter (20), meaning it's the one that is worst connected.
+
 
 # Spread of the disease
 
@@ -57,11 +58,11 @@ For fixed parameters such that:
 
 - $\beta = 0.05$
 - $\gamma = 0.15$
-- $p = 10$. 1% of the total nodes start on $t_{0}$ as infected.
+- $p = 10$; 1% of the total nodes start on $t_{0}$ as infected.
 
-below are the evolutions of the number of infectes nodes vs. the number of susceptible nodes.
+below are the evolutions of the number of infected nodes vs. the number of susceptible nodes.
 
-We have fixed the parameters such that $\beta << \gamma$, meaning that there should be more recoveries than infected nodes.
+We have fixed the parameters such that $\beta << \gamma$, meaning that there should be more recoveries than infected nodes. 
 
 ```{r  echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
 plotEvolution(nrInfected.er.graph, n, "Erdos-Renyi infected/susceptible evolution")
@@ -77,9 +78,9 @@ The infection spreads really fast and the number of infected nodes steadies on a
 
 In the BA model the contrary happens. The disease does not really spread and it actually dies a little bit before the 20 iteration.
 
-On the star model, the disease does not spread much and does it slowlier than on ER and the full graph. We can see how this network is pretty resistant and the number of susceptible (thus, not infected) is really higher than dose infected.
+On the star model, the disease does not spread much and does it slowlier than on ER and the full graph. We can see how this network is pretty resistant and the number of susceptible (thus, not infected) is really higher than those infected.
 
-Finally, on the last model, the WS, we can see how the disease spreads even slowlier than on the star network, but it actually reaches a higher number of infected nodes than it. It then steadies around $t = 50$.
+Finally, on the last model, the WS, we can see how the disease spreads even slowlier than on the star network, but it actually reaches a higher number of infected nodes. It then steadies around $t = 50$.
 
 For a better comparison, we can plot the evolution of infected together:
 ```{r  echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
@@ -94,4 +95,7 @@ For a better comparison, we can plot the evolution of infected together:
 
 ```
 
-TODO: Justify it a little bit more using the metrics from the previous metrics tabl
+We can see that the graph that, based on the first table, we verifyed was the worst connected (Barabasi-Albert) is the one that is the hardest to infect. In the star graph, we can imagine that it takes some time until it reaches an important node (one with many connections), but when it does it spreads fast and stabilizes. Watts-Strogatz takes the longest to reach its peak and estabilize. This can be due to its connection not being as goos as ER or full graph, but having a more distributed degree sequence. ER and full-graph behaved the same way. We were not expecting this result.
+
+The threshold does not apply. The epidemy estabilizes always (expect for Barabasi-Albert) algorithm and the expression doesn't hold.
+

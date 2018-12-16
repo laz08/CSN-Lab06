@@ -1,7 +1,7 @@
 
 computeSummaryTable <- function(graphs){
     
-    graphsNames = c("Erdo-Renyi", "Full graph", "Barabasi-Albert", "Star", "Watts-Strogatz")
+    graphsNames = c("Erdos-Renyi", "Full graph", "Barabasi-Albert", "Star", "Watts-Strogatz")
     table <- data.table("Graph" = character(),
                         "N" = numeric(),
                         "E" = numeric(),
@@ -68,6 +68,8 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
                 
                 ## Infect others
                 if(!infected[v] & beta > rands[r.idx]){
+                  cat("rand = ", rands[r.idx], "\n")
+                  cat("beta = ", beta, "\n")
                     tmp.infected[v] <- TRUE
                 }
                 
@@ -82,6 +84,8 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
                 
                 ## Infect others
                 if(!infected[u] & beta > rands[r.idx+2]){
+                  cat("rand = ", rands[r.idx+2], "\n")
+                  cat("beta = ", beta, "\n")
                     tmp.infected[u] <- TRUE
                 }
                 
