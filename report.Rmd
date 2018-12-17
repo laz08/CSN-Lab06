@@ -97,5 +97,5 @@ For a better comparison, we can plot the evolution of infected together:
 
 We can see that the graph that, based on the first table, we verifyed was the worst connected (Barabasi-Albert) is the one that is the hardest to infect. In the star graph, we can imagine that it takes some time until it reaches an important node (one with many connections), but when it does it spreads fast and stabilizes. Watts-Strogatz takes the longest to reach its peak and estabilize. This can be due to its connection not being as goos as ER or full graph, but having a more distributed degree sequence. ER and full-graph behaved the same way. We were not expecting this result.
 
-The threshold does not apply. The epidemy estabilizes always (expect for Barabasi-Albert) algorithm and the expression doesn't hold.
+The threshold does not apply. The epidemy estabilizes always (except for Barabasi-Albert) algorithm and the expression doesn't hold.
 
