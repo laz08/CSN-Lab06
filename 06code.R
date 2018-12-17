@@ -104,8 +104,9 @@ threshold.ws = spectrum(ws.graph)$values
 beta.2 = 0.05
 gamma.2 = threshold.er * beta.2; gamma.2
 
-gamma.2 = 0.15
-beta.2 = 
+gamma.2 = 0.4
+(beta.2 = gamma.2 /threshold.full); 
+beta.2 = beta.2 - 0.000
 
 p.2 = 5
 ts.2 = 40
