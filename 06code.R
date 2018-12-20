@@ -26,6 +26,7 @@ rm(wd)
 ##################
 PLOT = F
 RUN_FROM_SCRATCH = F
+
 source("functions.R")
 
 ###########
@@ -43,6 +44,7 @@ ws.graph <- watts.strogatz.game(1,n,4,0.5)
 
 graphs = list(er.graph, full.graph, ba.graph, star.graph, ws.graph)
 computeSummaryTable(graphs)
+computeLambdaTable(graphs)
 
 if(RUN_FROM_SCRATCH){
 
@@ -64,6 +66,12 @@ if(RUN_FROM_SCRATCH){
       plotEvolution(nrInfected.ba.graph, n, "Barabasi-Albert infected/susceptible evolution")
       plotEvolution(nrInfected.star.graph, n, "Star infected/susceptible evolution")
       plotEvolution(nrInfected.ws.graph, n, "Watts-Strogatz infected/susceptible evolution")
+      
+      plotEvolutionRatio(nrInfected.er.graph, n, "Erdos-Renyi infected/susceptible evolution ratio")
+      plotEvolutionRatio(nrInfected.full.graph, n, "Fully connected g. infected/susceptible evolution ratio")
+      plotEvolutionRatio(nrInfected.ba.graph, n, "Barabasi-Albert infected/susceptible evolution ratio")
+      plotEvolutionRatio(nrInfected.star.graph, n, "Star infected/susceptible evolution ratio")
+      plotEvolutionRatio(nrInfected.ws.graph, n, "Watts-Strogatz infected/susceptible evolution ratio")
     }
     write.csv2(nrInfected.er.graph, "./data/er_infected.csv")
     write.csv2(nrInfected.full.graph, "./data/full_infected.csv")

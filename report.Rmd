@@ -50,7 +50,28 @@ kable(computeSummaryTable(graphs),  caption="\\label{tab:table1}Summary table of
 With the parameters used, the full graph is the one that contains the largest amount of edges. This is obvious since the diameter is 1, all nodes are connected to all the other nodes. Erdos-Renyi follows with half of the edges, justifiable since we gave it the probability of 0.5 to generate an edge between two nodes (thus, the diameter will be 2). Barabasi-Albert model is the one with the smallest diameter (20), meaning it's the one that is worst connected.
 
 
-# Spread of the disease
+# Threshold
+
+We have computed for each graph its lambda and, for a fixed gamma, we are computing 
+the beta such that:
+
+$$\frac{\beta}{\gamma} = \frac{1}{\lambda}$$
+
+$$\beta = \frac{\gamma}{\lambda}$$
+
+
+| Graph           | lambda     | beta        | gamma |
+|-----------------|------------|--------------|------|
+| Erdos-Renyi     | 500.548283 | 0.0007991237 | 0.4  |
+| Full graph      | 999.000000 | 0.0004004004 | 0.4  |
+| Barabasi-Albert | 6.159719   | 0.0649380242 | 0.4  |
+| Star            | 31.606961  | 0.0126554399 | 0.4  |
+| Watts-Strogatz  | 8.827153   | 0.0453147262 | 0.4  |
+
+
+
+
+# Task 01: Spread of the disease
 
 Let's first address Task 01. Having implemented the function that simulates the spread of an infection in a SIS model for a given graph, we are going to check the evolution of the infected nodes and susceptible ones.
 
@@ -70,6 +91,12 @@ plotEvolution(nrInfected.full.graph, n, "Fully connected g. infected/susceptible
 plotEvolution(nrInfected.ba.graph, n, "Barabasi-Albert infected/susceptible evolution")
 plotEvolution(nrInfected.star.graph, n, "Star infected/susceptible evolution")
 plotEvolution(nrInfected.ws.graph, n, "Watts-Strogatz infected/susceptible evolution")
+
+plotEvolutionRatio(nrInfected.er.graph, n, "Erdos-Renyi infected/susceptible evolution ratio")
+plotEvolutionRatio(nrInfected.full.graph, n, "Fully connected g. infected/susceptible evolution ratio")
+plotEvolutionRatio(nrInfected.ba.graph, n, "Barabasi-Albert infected/susceptible evolution ratio")
+plotEvolutionRatio(nrInfected.star.graph, n, "Star infected/susceptible evolution ratio")
+plotEvolutionRatio(nrInfected.ws.graph, n, "Watts-Strogatz infected/susceptible evolution ratio")
 ```
 
 
@@ -95,7 +122,83 @@ For a better comparison, we can plot the evolution of infected together:
 
 ```
 
+And their ratios:
+```{r  echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
+ plot(seq(length(nrInfected.er.graph)), (nrInfected.er.graph/(n-nrInfected.er.graph)), type='l', ylim = c(0, 31), col="blue", main="Infected nodes evolution ratio comparison", ylab = "# infected nodes", xlab="t")
+    lines((nrInfected.full.graph/(n-nrInfected.full.graph)), col="red")
+    lines((nrInfected.ba.graph/(n-nrInfected.ba.graph)), col="green")
+    lines((nrInfected.star.graph/(n-nrInfected.star.graph)), col="orchid")
+    lines((nrInfected.ws.graph/(n-nrInfected.ws.graph)), col="skyblue")
+    grid()
+    legend("bottomright", legend = c("Erdo-Renyi", "Full graph", "Barabasi-Albert", "Star", "Watts-Strogatz"),
+           lty = 1, lwd = 2,col = c("blue", "red", "green", "orchid", "skyblue"))
+
+```
+
+
 We can see that the graph that, based on the first table, we verifyed was the worst connected (Barabasi-Albert) is the one that is the hardest to infect. In the star graph, we can imagine that it takes some time until it reaches an important node (one with many connections), but when it does it spreads fast and stabilizes. Watts-Strogatz takes the longest to reach its peak and estabilize. This can be due to its connection not being as goos as ER or full graph, but having a more distributed degree sequence. ER and full-graph behaved the same way. We were not expecting this result.
 
-The threshold does not apply. The epidemy estabilizes always (expect for Barabasi-Albert) algorithm and the expression doesn't hold.
+## Results commentary
+
+The threshold does not apply. The epidemy stabilizes always (expect for Barabasi-Albert) algorithm and the expression doesn't hold.
+
+We think that the infection spreads too fast on the ER and full graph, for example, and this is due an error from our part on the implementation, but we have been unable to correct it so far.
+
+
+# Task 02: Use the threshold
+
+Let's remember what the thresholds are for a fixed $\gamma$:
+
+
+| Graph           | lambda     | beta        | gamma |
+|-----------------|------------|--------------|------|
+| Erdos-Renyi     | 500.548283 | 0.0007991237 | 0.4  |
+| Full graph      | 999.000000 | 0.0004004004 | 0.4  |
+| Barabasi-Albert | 6.159719   | 0.0649380242 | 0.4  |
+| Star            | 31.606961  | 0.0126554399 | 0.4  |
+| Watts-Strogatz  | 8.827153   | 0.0453147262 | 0.4  |
+
+Since the Full-graph one is an homogenic system, the beta/gamma threshold should hold.
+
+We are going to decrease the beta so that
+
+$$\frac{\beta}{\gamma} < \frac{1}{\lambda}$$
+
+and thus, the infection should die. We have setted the simulation to work for 30 iterations and:
+
+- $\beta = 0.0002$
+- $\gamma = 0.4$
+- $p = 5$; 0.5% of the total nodes start on $t_{0}$ as infected.
+
+
+
+```{r cache=T, echo=FALSE, out.width="250px", out.height="250px", fig.align="center"}
+threshold.full = spectrum(full.graph)$values
+
+gamma.2 = 0.4
+beta.2 = 0.0004 - 0.0002
+
+p.2 = 5
+ts.2 = 30
+
+n = 1000
+
+nrInfected.full.graph.2 = simulateSIS(full.graph, beta.2, gamma.2, p.2, ts.2)
+plotEvolutionRatio(nrInfected.full.graph.2, n, "Fully connected g. infected/susceptible evolution ratio")
+```
+
+We can see how the threshold does not hold. Again, we are certain that the problem
+resides in our implementation. After 2 weeks of debugging and asking the professor, tho,
+we have been unable to pinpoint the exact problem.
+
+# Conclusions: Problems we have encountered
+
+The problems we have encountered with this delivery have been, ironically, many. 
+
+- We think we have the concepts very clear but our implementation fails somewhere and
+we have not been able to pinpoint why.
+
+- Also, the computation of the eigenvalues table has been tricky. We have, randomly, encountered errors when using the `spectrum` function. We found that this bug has been long reported but is still open\footnote{https://stackoverflow.com/questions/35316187/arpack-error-maximum-number-of-iterations-reached}, so we had to make the table manually, taking the values when the ARPACK package did not fail.
+
+- Finally, as mentioned, our results are not correct and we know about it, but we have not been able to correct them or pinpoint the problem for 2 weeks. We will probably still debug this code for more weeks since we want to focus our final project on epidemics, so we will probably face this problem again.
 

@@ -27,7 +27,30 @@ computeSummaryTable <- function(graphs){
     return(table)
 }
 
-simulateSIS <- function(g, beta, gamma, p, ts) {
+computeLambdaTable <- function(graphs){
+    
+    graphsNames = c("Erdos-Renyi", "Full graph", "Barabasi-Albert", "Star", "Watts-Strogatz")
+    table <- data.table("Graph" = character(),
+                        "lambda" = numeric(),
+                        "gamma" = numeric(),
+                        "beta" = numeric(),
+                        stringsAsFactors = FALSE)
+    
+    for (x in 1:length(graphsNames)){
+        
+        g = graphs[[x]]
+        gName = graphsNames[x]
+        print(gName)
+        lambda = spectrum(g, options=list(maxiter=1000000))$values
+        gamma = 0.4
+        beta = gamma/lambda
+        
+        table <- rbind(table, list(gName, lambda, beta, gamma))
+    }
+    return(table)
+}
+
+simulateSIS <- function(g, beta, gamma, p, ts, DEBUG=F, PLOT=F) {
     
     graph = as_edgelist(g)
     
@@ -41,6 +64,7 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
     set.seed(123)
     #rands = runif(ts * E * 4, 0, 1)
     rands = sample(seq(from = 0, to = 1, by=0.01), ts * E * 4, replace=TRUE)
+    #print(rands)
     nrInfected = c()
     
     for(t in seq(ts)){
@@ -48,7 +72,7 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
         visited = rep(FALSE, N)
         nrInfected[t] = length(which(infected == TRUE)) 
         
-        if(PLOT){
+        if(PLOT & DEBUG){
             vertex_attr(g, "infected", index = V(g)) <- (as.numeric(infected) + 5)
             plot(g, vertex.color = vertex_attr(g,"infected"), main=paste("t = ", t), layout=layout.circle)
         }
@@ -68,13 +92,13 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
                 
                 ## Infect others
                 if(!infected[v] & beta > rands[r.idx]){
-                  cat("rand = ", rands[r.idx], "\n")
-                  cat("beta = ", beta, "\n")
+                  #cat("rand = ", rands[r.idx], "\n")
+                  #cat("beta = ", beta, "\n")
                     tmp.infected[v] <- TRUE
                 }
                 
                 ## Recover yourself
-                if(!visited[u] & gamma > rands[r.idx+1]){
+                if(!visited[u] & gamma > rands[(r.idx+1)]){
                     tmp.infected[u] <- FALSE
                 }
             }
@@ -83,15 +107,19 @@ simulateSIS <- function(g, beta, gamma, p, ts) {
             if(infected[v]){
                 
                 ## Infect others
-                if(!infected[u] & beta > rands[r.idx+2]){
-                  cat("rand = ", rands[r.idx+2], "\n")
-                  cat("beta = ", beta, "\n")
+                if(!infected[u] & beta > rands[(r.idx+2)]){
+                    if(r.idx %% 10 == 0 & DEBUG){
+                        cat("r.idx = ", r.idx, "\n")
+                        cat("length rand = ", length(rands), "\n")
+                        cat("rand = ", rands[r.idx], "\n")
+                        cat("beta = ", beta, "\n")
+                    }
                     tmp.infected[u] <- TRUE
                 }
                 
                 ## Recover yourself
-                if(!visited[v] & gamma > rands[r.idx+3]){
-                    #cat("Gamma" , gamma, "rand", rands[r.idx+3], r.idx+3, "\n")
+                if(!visited[v] & gamma > rands[(r.idx+3)]){
+                    #cat("Gamma" , gamma, "rand", rands[(r.idx+3)], r.idx+3, "\n")
                     tmp.infected[v] <- FALSE
                 }
             }
@@ -113,3 +141,12 @@ plotEvolution  <- function(nrInfected, N, title){
     legend("topright", legend = c("Infected", "Susceptible"),
            lty = 1, lwd = 2,col = c("red", "blue"))
 }
+
+plotEvolutionRatio  <- function(nrInfected, N, title){
+    nrSusceptible = N - nrInfected
+    ts = seq(length(nrInfected))
+    plot(ts,(nrInfected/nrSusceptible), type='l', col="blue", main=title, ylab = "ratio", xlab="t")
+    
+    grid()
+}
+
