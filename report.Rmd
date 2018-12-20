@@ -201,4 +201,3 @@ we have not been able to pinpoint why.
 - Also, the computation of the eigenvalues table has been tricky. We have, randomly, encountered errors when using the `spectrum` function. We found that this bug has been long reported but is still open\footnote{https://stackoverflow.com/questions/35316187/arpack-error-maximum-number-of-iterations-reached}, so we had to make the table manually, taking the values when the ARPACK package did not fail.
 
 - Finally, as mentioned, our results are not correct and we know about it, but we have not been able to correct them or pinpoint the problem for 2 weeks. We will probably still debug this code for more weeks since we want to focus our final project on epidemics, so we will probably face this problem again.
-
